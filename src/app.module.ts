@@ -8,6 +8,9 @@ import { ProductsModule } from './products/products.module';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
+import { MulterConfigModule } from './multer-config/multer-config.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -15,12 +18,17 @@ import { AuthModule } from './auth/auth.module';
       envFilePath: '.env',
       isGlobal: true
     }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'), // Serve files from the 'uploads' directory
+      serveRoot: '/uploads', // Serve files under the '/uploads' route
+    }),
     MongooseModule.forRoot(process.env.DB_URI),
     UsersModule,
     CategoriesModule,
     OrdersModule,
     ProductsModule,
-    AuthModule
+    AuthModule,
+    MulterConfigModule
   ],
   controllers: [AppController],
   providers: [AppService],

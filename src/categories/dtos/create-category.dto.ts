@@ -9,7 +9,7 @@ export class CreateCategoryDto {
     en_name: string;
 
     @IsOptional()
-    icon: string;
+    image: string;
 
     @IsOptional()
     @IsArray()

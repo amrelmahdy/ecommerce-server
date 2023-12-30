@@ -20,7 +20,7 @@ export class Category {
     en_name: string;
 
     @Prop({ default: "/public/dist/img/placeholder.png" })
-    icon: string;
+    image: string;
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Category' })
     parent?: Category;

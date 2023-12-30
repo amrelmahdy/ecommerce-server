@@ -7,33 +7,33 @@ import { EditCategoryDto } from './dtos/edit-category.dto';
 @Controller('categories')
 export class CategoriesController {
 
-    constructor(private categoryService: CategoriesService) { }
+    constructor(private categoriesService: CategoriesService) { }
 
     @Get()
     getAllCategories(): Promise<Category[]> {
-        return this.categoryService.getAll()
+        return this.categoriesService.getAll()
     }
 
     @Post()
     creareCategory(@Body() category: CreateCategoryDto): Promise<Category> {
-        return this.categoryService.create(category);
+        return this.categoriesService.create(category);
     }
 
     @Get(':id')
     getCategory(@Param('id') id: string): Promise<Category> {
-        return this.categoryService.findById(id);
+        return this.categoriesService.findById(id);
     }
 
 
     @Put(':id')
     editCategory(@Param('id') id: string, @Body() body: EditCategoryDto): Promise<Category> {
-        return this.categoryService.update(id, body);
+        return this.categoriesService.update(id, body);
     }
 
 
     @Delete(':id')
     deleteCategory(@Param('id') id: string): Promise<Category> {
-        return this.categoryService.delete(id);
+        return this.categoriesService.delete(id);
     }
 
 }
