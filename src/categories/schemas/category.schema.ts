@@ -19,7 +19,10 @@ export class Category {
     @Prop({ required: true })
     en_name: string;
 
-    @Prop({ default: "/public/dist/img/placeholder.png" })
+    @Prop({ required: true })
+    slug: string;
+
+    @Prop({ default: "assets/images/placeholder-img-150x150.png" })
     image: string;
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Category' })

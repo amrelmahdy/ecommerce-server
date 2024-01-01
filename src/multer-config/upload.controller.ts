@@ -1,6 +1,6 @@
 // upload.controller.ts
-import { BadRequestException, Controller, FileTypeValidator, InternalServerErrorException, Param, ParseFilePipe, Post, UploadedFiles, UseInterceptors } from '@nestjs/common';
-import { AnyFilesInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { BadRequestException, Controller, FileTypeValidator, InternalServerErrorException, Param, ParseFilePipe, Post, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { AnyFilesInterceptor, FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { UploadService } from './upload.service';
 import { extname } from 'path';
@@ -20,18 +20,47 @@ export class UploadController {
         }
     }
 
-    @Post('upload')
+
+    @Post('upload-single-file')
+    @UseInterceptors(
+        FileInterceptor("file", {
+            storage: diskStorage({
+                destination: 'assets/uploads',
+                filename: (req, file, cb) => {
+                    cb(null, Date.now().toFixed() + extname(file.originalname).toLowerCase());
+                },
+            }),
+        }),
+    )
+    uploadFile(@UploadedFile(new ParseFilePipe({
+        validators: [
+            //new MaxFileSizeValidator({ maxSize: 10000 }),
+            new FileTypeValidator({
+                fileType: '.(png|jpeg|jpg)'
+
+            }),
+        ]
+    })) image: Express.Multer.File) {
+        const path = image.path;
+
+        return {
+            statusCode: 200,
+            data: path,
+        };
+    }
+
+    @Post('upload-multiple-files')
     @UseInterceptors(
         AnyFilesInterceptor({
             storage: diskStorage({
-                destination: 'uploads',
+                destination: 'assets/uploads',
                 filename: (req, file, cb) => {
                     cb(null, Date.now().toFixed() + '-' + file.originalname);
                 },
             }),
         }),
     )
-    uploadFile(@UploadedFiles(new ParseFilePipe({
+    uploadFiles(@UploadedFiles(new ParseFilePipe({
         validators: [
             //new MaxFileSizeValidator({ maxSize: 10000 }),
             new FileTypeValidator({
@@ -50,7 +79,7 @@ export class UploadController {
 
 
 
-    @Post("upload/dynamic/:path?")
+    @Post("dynamic-upload-multiple-files/:path?")
     @UseInterceptors(FilesInterceptor('files'))
     async uploadDFiles(@UploadedFiles() files: any, @Param() param: any) {
         const { path } = param;

@@ -8,6 +8,9 @@ export class CreateCategoryDto {
     @IsNotEmpty()
     en_name: string;
 
+    @IsNotEmpty()
+    slug: string;
+    
     @IsOptional()
     image: string;
 

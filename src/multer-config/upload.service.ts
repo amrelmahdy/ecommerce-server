@@ -10,7 +10,7 @@ export class UploadService {
  
   async saveFile(file: any, dir?: string): Promise<any> {
     
-    const uploadDir = dir ?  './uploads/' + dir : './uploads' ;
+    const uploadDir = dir ?  './assets/uploads/' + dir : './assets/uploads' ;
 
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir);

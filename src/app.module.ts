@@ -18,9 +18,15 @@ import { join } from 'path';
       envFilePath: '.env',
       isGlobal: true
     }),
+    // ServeStaticModule.forRoot({
+    //   rootPath: join(__dirname, '..'),
+    //   renderPath: 'uploads'
+
+    // }),
+
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'uploads'), // Serve files from the 'uploads' directory
-      serveRoot: '/uploads', // Serve files under the '/uploads' route
+      rootPath: join(__dirname, '..', 'assets'), // Serve files from the 'uploads' directory
+      serveRoot: '/assets', // Serve files under the '/uploads' route
     }),
     MongooseModule.forRoot(process.env.DB_URI),
     UsersModule,

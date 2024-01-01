@@ -1,13 +1,41 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Put, Delete } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dtos/create-product.dto';
+import { Product } from './schemas/product.schema';
+import { EditProductDto } from './dtos/edit-product.dto';
 
 @Controller('products')
 export class ProductsController {
-    constructor(private productsService: ProductsService){ }
+    constructor(private productsService: ProductsService) { }
+
+    @Get()
+    async getAllProducts(): Promise<Product[]> {
+        return this.productsService.getAll();
+    }
 
     @Post()
-    async createProduct(@Body() body: CreateProductDto){
-        console.log("body", body)
+    async createProduct(@Body() body: CreateProductDto): Promise<Product> {
+        return this.productsService.create(body);
+    }
+
+    @Post("bulk")
+    async createBulkProducts(@Body() body: CreateProductDto[]): Promise<Product[]> {
+        return this.productsService.createBulk(body);
+    }
+
+
+    @Get(":slug")
+    async getProduct(@Param("slug") slug: string): Promise<Product> {
+        return this.productsService.findOne({ slug });
+    }
+
+    @Put(":id")
+    async editProduct(@Param("id") id: string,@Body() body: EditProductDto): Promise<Product> {
+        return this.productsService.update(id, body);
+    }
+
+    @Delete(":id")
+    async deleteProduct(@Param("id") id: string): Promise<Product> {
+        return this.productsService.delete(id);
     }
 }

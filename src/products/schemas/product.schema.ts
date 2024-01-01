@@ -33,7 +33,7 @@ export class Product {
     price: string;
 
     @Prop()
-    new_price: string;
+    sale_price: string;
 
     @Prop()
     en_description: string;
@@ -42,25 +42,46 @@ export class Product {
     ar_description: string;
 
     @Prop({ default: [] })
-    images: Buffer[];
+    images: Image[];
 
     @Prop({ default: 0 })
     stock: number;
 
     @Prop({ default: 0 })
-    ratings: number;
+    average_rating: number;
+
+    @Prop()
+    subtitle: string;
+
+    @Prop()
+    promotion_title: string;
+
+    @Prop({ default: 0 })
+    max_quantity: number
+
+    @Prop()
+    sku: string;
 
     @Prop({ default: [] })
     reviews: Review[];
 
-    @Prop({ default: false })
-    is_sale: boolean;
-
-    @Prop({ default: false })
-    is_out_of_stock: boolean;
-
-    @Prop({ default: [], type: mongoose.Schema.Types.ObjectId, ref: 'Product' })
+    @Prop({ default: [], type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }] })
     categories: Category[];
+
+    @Prop({ default: false })
+    is_out_of_stck: boolean;
+
+    @Prop({ default: true })
+    is_taxable: boolean;
+
+    @Prop({ default: false })
+    is_on_sale: boolean;
+
+    @Prop({ default: true })
+    require_shipping: boolean;
+
+    @Prop({ default: false })
+    is_featured: boolean;
 }
 
-export const ProductSchema = SchemaFactory.createForClass(Category)
+export const ProductSchema = SchemaFactory.createForClass(Product)

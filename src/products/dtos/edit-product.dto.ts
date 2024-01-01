@@ -2,13 +2,11 @@ import { IsNotEmpty, IsArray, IsNumber, IsBoolean, IsOptional, ArrayMinSize } fr
 import { Category } from 'src/categories/schemas/category.schema';
 import { Product, Image, Review } from 'src/products/schemas/product.schema';
 
-// subtitle, promotion_title, max_quantity
-export class CreateProductDto {
+export class EditProductDto {
 
-    @IsNotEmpty()
+    @IsOptional()
     en_name: string;
 
-    @IsNotEmpty()
     ar_name: string;
 
     @IsOptional()
@@ -17,28 +15,32 @@ export class CreateProductDto {
     @IsOptional()
     promotion_title: string
 
-    @IsNotEmpty()
+    @IsOptional()
+    @IsNumber()
     max_quantity: number;
 
-    @IsNotEmpty()
+    @IsOptional()
     slug: string;
 
-    @IsNotEmpty()
+    @IsOptional()
+    @IsNumber()
     price: string;
 
     @IsOptional()
+    @IsNumber()
     sale_price: string;
 
-    @IsNotEmpty()
+    @IsOptional()
     en_description: string;
 
-    @IsNotEmpty()
+    @IsOptional()
     ar_description: string;
 
     @IsOptional()
     @IsArray()
     images: Image[];
 
+    @IsOptional()
     @IsNumber()
     stock: number;
 
@@ -77,7 +79,7 @@ export class CreateProductDto {
     @IsBoolean()
     is_out_of_stock: boolean;
 
+    @IsOptional()
     @ArrayMinSize(1)
-    @IsNotEmpty()
     categories: Category[];
 }

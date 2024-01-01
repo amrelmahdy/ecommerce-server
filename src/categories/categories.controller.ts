@@ -19,6 +19,12 @@ export class CategoriesController {
         return this.categoriesService.create(category);
     }
 
+
+    @Post("bulk")
+    creareBulkCategories(@Body() categories: CreateCategoryDto[]): Promise<Category[]> {
+        return this.categoriesService.createBulk(categories);
+    }
+
     @Get(':id')
     getCategory(@Param('id') id: string): Promise<Category> {
         return this.categoriesService.findById(id);

@@ -7,6 +7,9 @@ export class EditCategoryDto {
 
     @IsOptional()
     en_name: string;
+    
+    @IsOptional()
+    slug: string;
 
     @IsOptional()
     image: string;

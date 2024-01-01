@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Category } from './schemas/category.schema';
 import * as mongoose from 'mongoose';
@@ -11,11 +11,16 @@ export class CategoriesService {
     ) { }
 
     async getAll(): Promise<Category[]> {
-        const categories = await this.categoryModel.find({ parent: { $exists: false } }).populate('sub_categories')
+        // const categories = await this.categoryModel.find({ parent: { $exists: false } }).populate('sub_categories');
+        const categories = await this.categoryModel.find().populate('sub_categories parent').sort({ createdAt: -1 })
         return categories;
     }
 
     async create(category: Category): Promise<Category> {
+        const categoryWithSlug = await this.categoryModel.findOne({ slug: category.slug })
+        if(categoryWithSlug){
+            throw new ConflictException(`Category with slug "${ category.slug }" already exists`);
+        }
         const res = await this.categoryModel.create(category);
         if (category.parent) {
             await this.categoryModel.updateOne(
@@ -25,6 +30,19 @@ export class CategoriesService {
         }
         return res;
     }
+
+    async createBulk(categories: Category[]): Promise<Category[]> {
+        const categoryCreated = Promise.all(categories.map(async (category) => {
+            const categoryWithSlug = await this.categoryModel.findOne({ slug: category.slug })
+            if (categoryWithSlug) {
+                return;
+            }
+            const res = await this.categoryModel.create(category);
+            return res;
+        }))
+        return categoryCreated;
+    }
+
 
     async findById(id: string): Promise<Category> {
         const category = await this.categoryModel.findById(id).populate("sub_categories")
