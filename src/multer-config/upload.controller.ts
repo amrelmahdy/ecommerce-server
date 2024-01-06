@@ -1,9 +1,29 @@
+
+
 // upload.controller.ts
-import { BadRequestException, Controller, FileTypeValidator, InternalServerErrorException, Param, ParseFilePipe, Post, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, FileTypeValidator, InternalServerErrorException, Param, ParseFilePipe, Post, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { AnyFilesInterceptor, FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { UploadService } from './upload.service';
 import { extname } from 'path';
+import * as path from 'path';
+
+
+
+
+
+const pngFileFilter = (req, file, callback) => {
+    let ext = path.extname(file.originalname);
+
+    if (ext !== '.png') {
+        req.fileValidationError = 'Invalid file type';
+        return callback(new Error('Invalid file type'), false);
+    }
+
+    return callback(null, true);
+};
+
+
 
 @Controller()
 export class UploadController {
@@ -49,6 +69,7 @@ export class UploadController {
         };
     }
 
+
     @Post('upload-multiple-files')
     @UseInterceptors(
         AnyFilesInterceptor({
@@ -79,20 +100,17 @@ export class UploadController {
 
 
 
-    @Post("dynamic-upload-multiple-files/:path?")
+    @Post("dynamic-upload-multiple-files")
     @UseInterceptors(FilesInterceptor('files'))
-    async uploadDFiles(@UploadedFiles() files: any, @Param() param: any) {
-        const { path } = param;
+    async uploadDFiles(@UploadedFiles() files: any, @Body() body: any) {
+        const { path } = body;
         if (!files || files.length === 0) {
             throw new BadRequestException('No files uploaded');
         }
-
         const filePromises = files.map(async (file: any) => {
 
             this.validateFileExtension(file);
-
-            const uoloadPath = path ? path : undefined
-            const savedFile = await this.uploadService.saveFile(file, uoloadPath);
+            const savedFile = await this.uploadService.saveFile(file, path);
 
             if (savedFile) return savedFile;
         });
@@ -102,9 +120,16 @@ export class UploadController {
             throw new InternalServerErrorException('Whoops something wentwrong');
         }
 
-        return {
-            statusCode: 200,
-            data: results,
-        };
+        return results
     }
+
+
+    // @Post("dynamic-upload-multiple-files/:path?")
+    // @UseInterceptors(FilesInterceptor('files'))
+    // async uploadDFiles(@UploadedFiles() files) {
+    //     console.log(files);
+    //     // console.log(param);
+
+    //     return 'Done';
+    // }
 }

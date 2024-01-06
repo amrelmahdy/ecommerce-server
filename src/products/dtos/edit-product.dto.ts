@@ -10,10 +10,16 @@ export class EditProductDto {
     ar_name: string;
 
     @IsOptional()
-    subtitle: string
+    ar_subtitle: string
 
     @IsOptional()
-    promotion_title: string
+    en_subtitle: string
+
+    @IsOptional()
+    promotion_ar_title: string
+
+    @IsOptional()
+    promotion_en_title: string
 
     @IsOptional()
     @IsNumber()
@@ -24,11 +30,11 @@ export class EditProductDto {
 
     @IsOptional()
     @IsNumber()
-    price: string;
+    price: number;
 
     @IsOptional()
     @IsNumber()
-    sale_price: string;
+    sale_price: number;
 
     @IsOptional()
     en_description: string;

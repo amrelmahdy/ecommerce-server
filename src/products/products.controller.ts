@@ -29,6 +29,11 @@ export class ProductsController {
         return this.productsService.findOne({ slug });
     }
 
+    @Get("/:slug/related")
+    async getRelatedProducts(@Param("slug") slug: string): Promise<Product[]> {
+        return this.productsService.getRelatedProducts(slug);
+    }
+
     @Put(":id")
     async editProduct(@Param("id") id: string,@Body() body: EditProductDto): Promise<Product> {
         return this.productsService.update(id, body);

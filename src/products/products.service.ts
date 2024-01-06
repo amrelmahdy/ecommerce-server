@@ -46,11 +46,23 @@ export class ProductsService {
     }
 
     async findOne(query: any): Promise<Product> {
-        const product = await this.productsModel.findOne(query);
+        const product = await this.productsModel.findOne(query).populate("categories");
         if (!product) {
             throw new NotFoundException("Product not found")
         }
         return product;
+    }
+
+
+    async getRelatedProducts(slug: string): Promise<Product[]> {
+        const product = await this.productsModel.findOne({ slug });
+        if (!product) {
+            if (!product) {
+                throw new NotFoundException("Product not found")
+            }
+        }
+        const products = await this.productsModel.find({ "categories": product.categories, slug: { $ne: slug } }).populate("categories");
+        return products
     }
 
 

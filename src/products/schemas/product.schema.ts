@@ -30,10 +30,10 @@ export class Product {
     ar_name: string;
 
     @Prop({ required: true })
-    price: string;
+    price: number;
 
     @Prop()
-    sale_price: string;
+    sale_price: number;
 
     @Prop()
     en_description: string;
@@ -51,10 +51,16 @@ export class Product {
     average_rating: number;
 
     @Prop()
-    subtitle: string;
+    ar_subtitle: string;
+    
+    @Prop()
+    en_subtitle: string;
 
     @Prop()
-    promotion_title: string;
+    promotion_ar_title: string;
+
+    @Prop()
+    promotion_en_title: string;
 
     @Prop({ default: 0 })
     max_quantity: number

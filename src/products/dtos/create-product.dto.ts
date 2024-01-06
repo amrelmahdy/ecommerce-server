@@ -12,10 +12,16 @@ export class CreateProductDto {
     ar_name: string;
 
     @IsOptional()
-    subtitle: string
+    ar_subtitle: string
 
     @IsOptional()
-    promotion_title: string
+    en_subtitle: string
+
+    @IsOptional()
+    promotion_ar_title: string
+
+    @IsOptional()
+    promotion_en_title: string
 
     @IsNotEmpty()
     max_quantity: number;
@@ -24,10 +30,10 @@ export class CreateProductDto {
     slug: string;
 
     @IsNotEmpty()
-    price: string;
+    price: number;
 
     @IsOptional()
-    sale_price: string;
+    sale_price: number;
 
     @IsNotEmpty()
     en_description: string;
@@ -35,8 +41,8 @@ export class CreateProductDto {
     @IsNotEmpty()
     ar_description: string;
 
-    @IsOptional()
-    @IsArray()
+    @ArrayMinSize(1)
+    @IsNotEmpty()
     images: Image[];
 
     @IsNumber()
