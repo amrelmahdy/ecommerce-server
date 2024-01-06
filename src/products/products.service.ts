@@ -24,7 +24,6 @@ export class ProductsService {
         return res;
     }
 
-
     async createBulk(products: Product[]): Promise<Product[]> {
         const productsCreated = Promise.all(products.map(async (product) => {
             const productWithSlug = await this.productsModel.findOne({ slug: product.slug })
