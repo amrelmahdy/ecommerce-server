@@ -18,8 +18,8 @@ export class CategoriesService {
 
     async create(category: Category): Promise<Category> {
         const categoryWithSlug = await this.categoryModel.findOne({ slug: category.slug })
-        if(categoryWithSlug){
-            throw new ConflictException(`Category with slug "${ category.slug }" already exists`);
+        if (categoryWithSlug) {
+            throw new ConflictException(`Category with slug "${category.slug}" already exists`);
         }
         const res = await this.categoryModel.create(category);
         if (category.parent) {
@@ -53,10 +53,10 @@ export class CategoriesService {
     }
 
     async update(id: string, category: Category): Promise<Category> {
-
+        const { ar_name,en_name, slug, image } = category;
         const updatedCategory = await this.categoryModel.findOneAndUpdate(
             { _id: id },
-            { $set: { ...category } },
+            { $set: { ar_name,en_name, slug, image } },
             { new: true }
         );
 
