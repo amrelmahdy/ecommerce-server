@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Category } from './../../categories/schemas/category.schema'
 import mongoose from 'mongoose';
+import { Vendor } from 'src/vendors/schemas/vendor.schema';
 
 
 export interface Image {
@@ -13,6 +14,12 @@ export interface Review {
     value: string;
     headline: string;
     review: string;
+}
+
+
+export interface Tag {
+    name: string;
+    slug: string;
 }
 
 @Schema({
@@ -52,7 +59,7 @@ export class Product {
 
     @Prop()
     ar_subtitle: string;
-    
+
     @Prop()
     en_subtitle: string;
 
@@ -71,8 +78,17 @@ export class Product {
     @Prop({ default: [] })
     reviews: Review[];
 
+    @Prop({ default: [] })
+    ar_tags: Tag[];
+
+    @Prop({ default: [] })
+    en_tags: Tag[];
+
     @Prop({ default: [], type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }] })
     categories: Category[];
+
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Vendor' })
+    vendor: Vendor;
 
     @Prop({ default: false })
     is_out_of_stck: boolean;
@@ -88,6 +104,9 @@ export class Product {
 
     @Prop({ default: false })
     is_featured: boolean;
+
+    @Prop({ default: false })
+    is_published: boolean;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product)

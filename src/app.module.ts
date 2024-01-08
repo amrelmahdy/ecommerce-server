@@ -11,6 +11,7 @@ import { AuthModule } from './auth/auth.module';
 import { MulterConfigModule } from './multer-config/multer-config.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { VendorsModule } from './vendors/vendors.module';
 
 @Module({
   imports: [
@@ -34,7 +35,8 @@ import { join } from 'path';
     OrdersModule,
     ProductsModule,
     AuthModule,
-    MulterConfigModule
+    MulterConfigModule,
+    VendorsModule
   ],
   controllers: [AppController],
   providers: [AppService],

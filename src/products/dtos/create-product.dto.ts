@@ -1,8 +1,9 @@
 import { IsNotEmpty, IsArray, IsNumber, IsBoolean, IsOptional, ArrayMinSize } from 'class-validator';
 import { Category } from 'src/categories/schemas/category.schema';
-import { Product, Image, Review } from 'src/products/schemas/product.schema';
+import { Product, Image, Review, Tag } from 'src/products/schemas/product.schema';
+import { Vendor } from 'src/vendors/schemas/vendor.schema';
 
-// subtitle, promotion_title, max_quantity
+
 export class CreateProductDto {
 
     @IsNotEmpty()
@@ -42,8 +43,14 @@ export class CreateProductDto {
     ar_description: string;
 
     @ArrayMinSize(1)
-    @IsNotEmpty()
+    @IsOptional()
     images: Image[];
+
+    @IsOptional()
+    en_tags: Tag[];
+
+    @IsOptional()
+    ar_tags: Tag[];
 
     @IsNumber()
     stock: number;
@@ -54,6 +61,13 @@ export class CreateProductDto {
 
     @IsOptional()
     reviews: Review[];
+
+    @ArrayMinSize(1)
+    @IsNotEmpty()
+    categories: Category[];
+
+    @IsNotEmpty()
+    vendor: Vendor;
 
     @IsOptional()
     @IsBoolean()
@@ -83,7 +97,8 @@ export class CreateProductDto {
     @IsBoolean()
     is_out_of_stock: boolean;
 
-    @ArrayMinSize(1)
-    @IsNotEmpty()
-    categories: Category[];
+
+    @IsOptional()
+    @IsBoolean()
+    is_published: boolean;
 }
