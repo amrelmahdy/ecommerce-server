@@ -47,15 +47,15 @@ export class VendorsService {
                 throw new NotFoundException(`Invalid Product id ${id}`)
             }
         }
-        const updatedProduct = await this.vendorsModule.findOneAndUpdate(
+        const updatedVendor = await this.vendorsModule.findOneAndUpdate(
             { _id: id },
             { $set: { ...vendor } },
             { new: true }
         );
-        if (!updatedProduct) {
+        if (!updatedVendor) {
             throw new NotFoundException("Vendor not found")
         }
-        return updatedProduct;
+        return updatedVendor;
     }
 
     async delete(id: string): Promise<Vendor> {

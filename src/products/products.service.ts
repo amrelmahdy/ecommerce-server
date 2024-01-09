@@ -3,6 +3,7 @@ import mongoose, { Mongoose } from 'mongoose';
 import { Product } from './schemas/product.schema';
 import { InjectModel } from '@nestjs/mongoose';
 
+const fs = require('fs-extra')
 @Injectable()
 export class ProductsService {
     constructor(
@@ -11,7 +12,7 @@ export class ProductsService {
     ) { }
 
     async getAll(): Promise<Product[]> {
-        const products = await this.productsModel.find().populate('categories').sort({ createdAt: -1 });
+        const products = await this.productsModel.find().populate('categories vendor').sort({ createdAt: -1 });
         return products;
     }
 
@@ -88,6 +89,8 @@ export class ProductsService {
         if (!deleted) {
             throw new NotFoundException("Product not found")
         }
+        const currentDirectory = process.cwd();
+        fs.remove(currentDirectory + "/assets/uploads/products/" + deleted.slug);
         return deleted;
     }
 }

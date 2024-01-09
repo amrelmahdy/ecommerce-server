@@ -77,7 +77,7 @@ export class EditProductDto {
 
     @IsOptional()
     @IsBoolean()
-    is_out_of_stck: boolean;
+    is_out_of_stock: boolean;
 
     @IsOptional()
     @IsBoolean()
@@ -94,11 +94,6 @@ export class EditProductDto {
 
     @IsOptional()
     sku: string;
-
-    @IsOptional()
-    @IsBoolean()
-    is_out_of_stock: boolean;
-
 
     @IsOptional()
     @IsBoolean()

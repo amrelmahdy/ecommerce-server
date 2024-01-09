@@ -91,7 +91,7 @@ export class Product {
     vendor: Vendor;
 
     @Prop({ default: false })
-    is_out_of_stck: boolean;
+    is_out_of_stock: boolean;
 
     @Prop({ default: true })
     is_taxable: boolean;

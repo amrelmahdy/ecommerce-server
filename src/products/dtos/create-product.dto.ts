@@ -42,7 +42,6 @@ export class CreateProductDto {
     @IsNotEmpty()
     ar_description: string;
 
-    @ArrayMinSize(1)
     @IsOptional()
     images: Image[];
 
@@ -75,7 +74,7 @@ export class CreateProductDto {
 
     @IsOptional()
     @IsBoolean()
-    is_out_of_stck: boolean;
+    is_out_of_stock: boolean;
 
     @IsOptional()
     @IsBoolean()
@@ -92,11 +91,6 @@ export class CreateProductDto {
 
     @IsOptional()
     sku: string;
-
-    @IsOptional()
-    @IsBoolean()
-    is_out_of_stock: boolean;
-
 
     @IsOptional()
     @IsBoolean()

@@ -1,10 +1,9 @@
-import { IsArray,IsNotEmpty, IsOptional } from 'class-validator';
-import { Vendor } from './../schemas/vendor.schema'
+import { IsNotEmpty } from 'class-validator';
 
 export class CreateVendorDto {
     @IsNotEmpty()
     ar_name: string;
-    
+
     @IsNotEmpty()
     en_name: string;
 
