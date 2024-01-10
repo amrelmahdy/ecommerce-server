@@ -46,7 +46,7 @@ export class ProductsService {
     }
 
     async findOne(query: any): Promise<Product> {
-        const product = await this.productsModel.findOne(query).populate("categories");
+        const product = await this.productsModel.findOne(query).populate("categories vendor");
         if (!product) {
             throw new NotFoundException("Product not found")
         }
