@@ -30,10 +30,10 @@ export class Product {
     @Prop({ required: true })
     slug: string;
 
-    @Prop({ required: true })
+    @Prop({ required: true, type: String, index: 'text' })
     en_name: string;
 
-    @Prop({ required: true })
+    @Prop({ required: true,type: String, index: 'text' })
     ar_name: string;
 
     @Prop({ required: true })

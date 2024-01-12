@@ -7,33 +7,43 @@ import { Vendor } from './schemas/vendor.schema';
 export class VendorsService {
     constructor(
         @InjectModel(Vendor.name)
-        private vendorsModule: mongoose.Model<Vendor>
+        private vendorsModel: mongoose.Model<Vendor>
     ) { }
 
     async getAll(): Promise<Vendor[]> {
-        const vendors = await this.vendorsModule.find();
+        const vendors = await this.vendorsModel.find();
         return vendors;
     }
 
+    async getListOfIds(slugs: string[]): Promise<any> {
+        const vendorIds = await this.vendorsModel
+            .findOne({ slug: { $in: slugs } })
+            .distinct('_id');
+
+        const stringIds = vendorIds.map((id) => id.toString());
+
+        return stringIds
+    }
+
     async create(vendor: Vendor): Promise<Vendor> {
-        const vendorWithSlug = await this.vendorsModule.findOne({ slug: vendor.slug })
+        const vendorWithSlug = await this.vendorsModel.findOne({ slug: vendor.slug })
         if (vendorWithSlug) {
             throw new ConflictException(`Vendor with slug "${vendor.slug}" already exists`);
         }
-        return this.vendorsModule.create(vendor);
+        return this.vendorsModel.create(vendor);
     }
 
 
     async findOne(query: any): Promise<Vendor> {
-        const vendor = await this.vendorsModule.findOne(query);
+        const vendor = await this.vendorsModel.findOne(query);
         if (!vendor) {
             throw new NotFoundException("Vendor not found")
         }
         return vendor;
     }
 
-    async findById(id: string): Promise<Vendor>  { 
-        const vendor = await this.vendorsModule.findById(id);
+    async findById(id: string): Promise<Vendor> {
+        const vendor = await this.vendorsModel.findById(id);
         if (!vendor) {
             throw new NotFoundException("vendor not found");
         }
@@ -47,7 +57,7 @@ export class VendorsService {
                 throw new NotFoundException(`Invalid Product id ${id}`)
             }
         }
-        const updatedVendor = await this.vendorsModule.findOneAndUpdate(
+        const updatedVendor = await this.vendorsModel.findOneAndUpdate(
             { _id: id },
             { $set: { ...vendor } },
             { new: true }
@@ -59,10 +69,10 @@ export class VendorsService {
     }
 
     async delete(id: string): Promise<Vendor> {
-        const deleted = await this.vendorsModule.findOneAndDelete({ _id: id });
+        const deleted = await this.vendorsModel.findOneAndDelete({ _id: id });
         if (!deleted) {
             throw new NotFoundException("Vendor not found")
         }
         return deleted;
-     }
+    }
 }

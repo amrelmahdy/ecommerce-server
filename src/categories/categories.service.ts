@@ -53,11 +53,22 @@ export class CategoriesService {
         return category;
     }
 
+
+    async findOne(query: any): Promise<any> {
+        const category = await this.categoryModel.findOne(query).populate("sub_categories")
+        if (!category) {
+            throw new NotFoundException("Category not found")
+        }
+        return category;
+    }
+
+
+
     async update(id: string, category: Category): Promise<Category> {
-        const { ar_name,en_name, slug, image } = category;
+        const { ar_name, en_name, slug, image } = category;
         const updatedCategory = await this.categoryModel.findOneAndUpdate(
             { _id: id },
-            { $set: { ar_name,en_name, slug, image } },
+            { $set: { ar_name, en_name, slug, image } },
             { new: true }
         );
 

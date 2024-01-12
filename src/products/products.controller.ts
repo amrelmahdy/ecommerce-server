@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, Put, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Put, Delete, Query } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dtos/create-product.dto';
 import { Product } from './schemas/product.schema';
@@ -12,6 +12,14 @@ export class ProductsController {
     async getAllProducts(): Promise<Product[]> {
         return this.productsService.getAll();
     }
+
+
+    @Get("/shop")
+    async getShopProducts(@Query() query: any): Promise<Product[]> {
+        console.log(query)
+        return this.productsService.getAll(query);
+    }
+
 
     @Post()
     async createProduct(@Body() body: CreateProductDto): Promise<Product> {

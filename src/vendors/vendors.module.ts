@@ -7,6 +7,7 @@ import { vendorSchema } from './schemas/vendor.schema';
 @Module({
   imports: [MongooseModule.forFeature([{ name: 'Vendor', schema: vendorSchema }])],
   controllers: [VendorsController],
-  providers: [VendorsService]
+  providers: [VendorsService],
+  exports: [VendorsService]
 })
 export class VendorsModule {}

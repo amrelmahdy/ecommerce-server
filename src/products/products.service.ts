@@ -2,17 +2,57 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import mongoose, { Mongoose } from 'mongoose';
 import { Product } from './schemas/product.schema';
 import { InjectModel } from '@nestjs/mongoose';
+import { CategoriesService } from 'src/categories/categories.service';
+import { VendorsService } from 'src/vendors/vendors.service';
+
+function fuzzySearch(text) {
+    return text.split('').join('.*');
+}
 
 const fs = require('fs-extra')
 @Injectable()
 export class ProductsService {
     constructor(
+        private categoriesService: CategoriesService,
+        private vendorsServices: VendorsService,
         @InjectModel(Product.name)
         private productsModel: mongoose.Model<Product>
     ) { }
 
-    async getAll(): Promise<Product[]> {
-        const products = await this.productsModel.find().populate('categories vendor').sort({ createdAt: -1 });
+    async getAll(query?: any): Promise<Product[]> {
+        let searchQuery: any = {}
+
+        if (query?.search) {
+            searchQuery['$or'] = [
+                { 'ar_name': { $regex: query.search, $options: 'i' } },
+                { 'en_name': { $regex: new RegExp(query.search, 'i') } },
+                { 'en_tags': { $elemMatch: { 'slug': { $in: [query.search] } } } },
+                { 'ar_tags': { $elemMatch: { 'slug': { $in: [query.search] } } } },
+            ]
+        }
+
+        if (query?.category) {
+            const category = await this.categoriesService.findOne({ slug: query.category });
+            if (category) {
+                searchQuery.categories = { $in: [category._id] }
+            }
+        }
+        if (query?.vendor) {
+            const vendors = query.vendor.split(",");
+            const vendorIds = await this.vendorsServices.getListOfIds(vendors);
+            searchQuery.vendor = { $in: vendorIds }
+        }
+
+        if (query?.tag) {
+            searchQuery['$or'] = [
+                { 'en_tags': { $elemMatch: { 'slug': { $in: [query.tag] } } } },
+                { 'ar_tags': { $elemMatch: { 'slug': { $in: [query.tag] } } } },
+            ]
+        }
+        const products = await this.productsModel
+            .find(searchQuery)
+            .populate('categories vendor')
+            .sort({ createdAt: -1 });
         return products;
     }
 
