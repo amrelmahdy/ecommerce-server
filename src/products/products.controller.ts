@@ -15,9 +15,8 @@ export class ProductsController {
 
 
     @Get("/shop")
-    async getShopProducts(@Query() query: any): Promise<Product[]> {
-        console.log(query)
-        return this.productsService.getAll(query);
+    async getShopProducts(@Query() query: any): Promise<any> {
+        return this.productsService.getAll(query, true);
     }
 
 

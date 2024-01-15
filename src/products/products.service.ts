@@ -19,9 +19,14 @@ export class ProductsService {
         private productsModel: mongoose.Model<Product>
     ) { }
 
-    async getAll(query?: any): Promise<Product[]> {
+    async getAll(query?: any, isPublished?: boolean): Promise<any> {
+        let page = 1;
+        let limit = 12;
         let searchQuery: any = {}
-
+        let sortBy: any = { createdAt: -1 }
+        if (query?.isFeatured) {
+            searchQuery = { ...searchQuery, is_featured: true }
+        }
         if (query?.search) {
             searchQuery['$or'] = [
                 { 'ar_name': { $regex: query.search, $options: 'i' } },
@@ -30,7 +35,6 @@ export class ProductsService {
                 { 'ar_tags': { $elemMatch: { 'slug': { $in: [query.search] } } } },
             ]
         }
-
         if (query?.category) {
             const category = await this.categoriesService.findOne({ slug: query.category });
             if (category) {
@@ -42,18 +46,59 @@ export class ProductsService {
             const vendorIds = await this.vendorsServices.getListOfIds(vendors);
             searchQuery.vendor = { $in: vendorIds }
         }
-
         if (query?.tag) {
             searchQuery['$or'] = [
                 { 'en_tags': { $elemMatch: { 'slug': { $in: [query.tag] } } } },
                 { 'ar_tags': { $elemMatch: { 'slug': { $in: [query.tag] } } } },
             ]
         }
+
+        if (isPublished) {
+            searchQuery = { ...searchQuery, is_published: true }
+        }
+
+        if (query?.page) {
+            page = query?.page
+        }
+
+        if (query?.pageSize) {
+            limit = query?.pageSize
+        }
+
+        if (query?.sortBy) {
+            const sort: string = query?.sortBy
+            if (sort == "price") {
+                sortBy = { price: 1 }
+            }
+            else if (sort == "price-desc") {
+                sortBy = { price: -1 }
+            }
+            else if (sort == "rating") {
+                sortBy = { average_rating: -1 }
+            } else {
+                sortBy = { createdAt: -1 }
+            }
+        }
+        if (query?.sale) {
+            searchQuery = { ...searchQuery, is_on_sale: true }
+        }
+
+        const totalCount = await this.productsModel.countDocuments(searchQuery);
+
+
+
+        console.log(query?.sale)
+
         const products = await this.productsModel
             .find(searchQuery)
             .populate('categories vendor')
-            .sort({ createdAt: -1 });
-        return products;
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .sort(sortBy);
+        return {
+            products,
+            total: totalCount
+        };
     }
 
     async create(product: Product): Promise<Product> {

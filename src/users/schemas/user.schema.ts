@@ -26,7 +26,9 @@ export class User {
     @Prop({ required: true })
     phone: string
 
-
+    @Prop({ default: "assets/images/placeholder-img-150x150.png" })
+    image: string;
+    
     @Prop({ required: true })
     password: string
 

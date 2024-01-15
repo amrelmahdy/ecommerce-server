@@ -20,4 +20,7 @@ export class CreateUserDto {
 
     @IsOptional()
     role: number;
+
+    @IsOptional()
+    image: string;
 }

@@ -20,4 +20,7 @@ export class EditUserDto {
 
     @IsOptional()
     role: number;
+
+    @IsOptional()
+    image: string;
 }
