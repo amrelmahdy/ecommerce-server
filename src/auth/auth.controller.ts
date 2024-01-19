@@ -25,7 +25,7 @@ export class AuthController {
     @UseGuards(JwtAuthGuard)
     @Get("user")
     async getUser(@Request() req: any): Promise<User> {
-        return req.user;
+        return this.authService.getCurrentUser(req.user);
     }
 
     @UseGuards(RefreshTokenJwtAuthGuard)

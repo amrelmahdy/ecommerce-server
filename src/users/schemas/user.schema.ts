@@ -1,5 +1,6 @@
 import { SchemaFactory, Prop, Schema } from "@nestjs/mongoose";
 import mongoose from "mongoose";
+import { Product } from "src/products/schemas/product.schema";
 
 
 @Schema({
@@ -7,7 +8,7 @@ import mongoose from "mongoose";
     toJSON: {
         virtuals: true,
         transform: function (doc, ret) {
-            delete ret._id;
+            //delete ret._id;
             delete ret.__v;
             delete ret.password;
             return ret;
@@ -33,11 +34,17 @@ export class User {
     password: string
 
     @Prop({ default: false })
-    isVerified: boolean
+    is_verified: boolean
 
     @Prop( { default: 0 })
     role: number
+   
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }], default: [] })
+    wish_list: Product[]
 
+    
+    
+ // orders: [{ type: Schema.Types.ObjectId, ref: 'Order' }],
 
     // name: {
     //     type: String,

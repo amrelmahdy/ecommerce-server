@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { User } from './schemas/user.schema';
 import mongoose from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import { ProductsService } from 'src/products/products.service';
 
 export enum Role {
     User = 'user',
@@ -12,35 +13,38 @@ export enum Role {
 export class UsersService {
     constructor(
         @InjectModel(User.name)
-        private userModel: mongoose.Model<User>
+        private usersModel: mongoose.Model<User>,
+        private productsService: ProductsService
     ) { }
 
     async getAll(): Promise<User[]> {
-        const users = await this.userModel.find({});
+        const users = await this.usersModel.find({});
         return users
     }
 
     async create(user: User): Promise<User> {
-        const res = await this.userModel.create(user);
+        const res = await this.usersModel.create(user);
         return res
     }
 
 
     async findById(id: string): Promise<User> {
-        const user = await this.userModel.findById(id);
+        const user = await this.usersModel.findById(id).populate("wish_list");
         if (!user) {
             throw new NotFoundException("User not found.");
         }
         return user
     }
 
+
+
     async findByEmailOrPhone(email: string, phone: string): Promise<User> {
-        const user = await this.userModel.findOne({ "$or": [{ email: email }, { phone: phone }] });
+        const user = await this.usersModel.findOne({ "$or": [{ email: email }, { phone: phone }] }).populate("wish_list");
         return user;
     }
 
     async update(id: string, user: User): Promise<User> {
-        const updatedUser = await this.userModel.findOneAndUpdate(
+        const updatedUser = await this.usersModel.findOneAndUpdate(
             { _id: id },
             { $set: { ...user } },
             { new: true }
@@ -49,10 +53,46 @@ export class UsersService {
     }
 
     async delete(id: string): Promise<User> {
-        const user = await this.userModel.findOneAndDelete({ _id: id });
+        const user = await this.usersModel.findOneAndDelete({ _id: id });
         if (!user) {
             throw new NotFoundException("User not found.");
         }
         return user
     }
+
+    async addTotWishList(username: string, productId: string) {
+        const product = await this.productsService.findById(productId);
+        if (!product) {
+            throw new NotFoundException("Product not found.");
+        }
+
+        // Find the user and check if the product is already in the wishlist
+        const user = await this.usersModel.findOne(
+            { "$or": [{ email: username }, { phone: username }] }
+        );
+
+        if (!user) {
+            throw new NotFoundException("User not found.");
+        }
+
+        const isProductInWishlist = user.wish_list.some((wishlistProduct) => wishlistProduct.toString() === productId.toString());
+
+        // If the product is already in the wishlist, remove it; otherwise, add it
+        const userUpdated = isProductInWishlist
+            ? this.usersModel.updateOne(
+                { "$or": [{ email: username }, { phone: username }] },
+                { $pull: { wish_list: productId } }
+            )
+            : this.usersModel.updateOne(
+                { "$or": [{ email: username }, { phone: username }] },
+                { $addToSet: { wish_list: productId } }
+            );
+
+        if (!userUpdated) {
+            throw new NotFoundException("Failed to update user wishlist.");
+        }
+
+        return userUpdated;
+    }
+
 }

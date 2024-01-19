@@ -4,7 +4,6 @@ import { User } from 'src/users/schemas/user.schema';
 import { UsersService } from 'src/users/users.service';
 
 const bcryptjs = require('bcryptjs')
-const now = Date.now()
 
 @Injectable()
 export class AuthService {
@@ -19,7 +18,7 @@ export class AuthService {
             const isMatch = await bcryptjs.compare(password, user.password)
             if (isMatch) {
                 const plainUser = (user as any).toObject();
-                const { password, __v, _id, ...rest } = plainUser;
+                const { password, __v, ...rest } = plainUser;
                 return rest;
             }
         }
@@ -27,26 +26,31 @@ export class AuthService {
     }
 
     async login(user: User) {
+        const now = Date.now()
+        const userId = (user as any)._id
         const payload = {
+            userId: userId.toString(),
             username: user.email,
             sub: {
                 name: user.name,
                 phone: user.phone
             }
         };
+
         return {
             access_token: this.jwtService.sign(payload),
             refresh_token: this.jwtService.sign(payload, { expiresIn: '86400s' }),
             token_type: "Bearer",
             expires_in: "3600",
-            "expires_at": `${now + 3600}`,
-            "refresh_expires_at": `${now + 86400}`,
-            "refresh_expires_in": "86400",
+            expires_at: `${now + 3600 * 1000}`,
+            refresh_expires_at: `${now + 86400 * 1000}`,
+            refresh_expires_in: "86400",
             userInfo: user
         }
     }
 
     async register(body: User): Promise<any> {
+        const now = Date.now()
         const { email, phone, password } = body;
         const userIsTaken = await this.usersService.findByEmailOrPhone(email, phone)
         if (userIsTaken) {
@@ -61,7 +65,11 @@ export class AuthService {
 
         const user = await this.usersService.create(body);
 
+
+        const userId = (user as any)._id
+
         const payload = {
+            userId: userId,
             username: user.email,
             sub: {
                 name: user.name,
@@ -73,15 +81,17 @@ export class AuthService {
             refresh_token: this.jwtService.sign(payload, { expiresIn: '86400s' }),
             token_type: "Bearer",
             expires_in: "3600",
-            "expires_at": `${now + 3600}`,
-            "refresh_expires_at": `${now + 86400}`,
-            "refresh_expires_in": "86400",
+            expires_at: `${now + 3600 * 1000}`,
+            refresh_expires_at: `${now + 86400 * 1000}`,
+            refresh_expires_in: "86400",
             userInfo: user
         }
     }
 
     refreshToken(currentUser: any): any {
+        const now = Date.now()
         const payload = {
+            userId: currentUser.userId,
             username: currentUser.username,
             sub: {
                 name: currentUser.user.name,
@@ -90,6 +100,15 @@ export class AuthService {
         };
         return {
             access_token: this.jwtService.sign(payload),
+            expires_in: "3600",
+            expires_at: `${now + 3600 * 1000}`,
         }
     }
+
+    async getCurrentUser(user: any): Promise<User> {
+        const { userId } = user
+        const currentUser = await this.usersService.findById(userId);
+        return currentUser
+    }
+
 }

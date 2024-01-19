@@ -12,9 +12,9 @@ export class RefreshTokenJwtStrategy extends PassportStrategy(Strategy, 'jwt-ref
     })
   }
 
-  async validate(payload: any){
+  async validate(payload: any) {
     return {
-      user: payload.sub, username: payload.username
+      userId: payload.userId, user: payload.sub, username: payload.username
     }
   }
 }

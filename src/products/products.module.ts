@@ -15,6 +15,7 @@ import { VendorsModule } from 'src/vendors/vendors.module';
       
     ],
   controllers: [ProductsController],
-  providers: [ProductsService]
+  providers: [ProductsService],
+  exports: [ProductsService]
 })
 export class ProductsModule { }

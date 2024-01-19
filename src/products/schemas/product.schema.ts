@@ -23,9 +23,16 @@ export interface Tag {
 }
 
 @Schema({
-    timestamps: true
+    timestamps: true,
+    toJSON: {
+        virtuals: true,
+        transform: function (doc, ret) {
+            delete ret._id;
+            delete ret.__v;
+            return ret;
+        }
+    }
 })
-
 export class Product {
     @Prop({ required: true })
     slug: string;
