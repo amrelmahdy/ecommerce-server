@@ -50,13 +50,10 @@ export class CartService {
         if (!cart) {
             cart = await this.createCart(userId);
         }
-
         const product  = await this.productsService.findById(productId);
-
         if(!product){
             throw new NotFoundException("This product not found")
         }
-
         const itemIndex = cart.items.findIndex(item => {
             const id =(item.product as any)._id.toString();
             return id === productId
@@ -82,5 +79,28 @@ export class CartService {
             })
         }
 
+    }
+
+    async removeProductFromCart(userId: string, productId:  string){
+        let cart = await this.getCartByUserId(userId);
+        if (!cart) {
+            cart = await this.createCart(userId);
+        }
+        const product  = await this.productsService.findById(productId);
+        if(!product){
+            throw new NotFoundException("This product not found")
+        }
+        const newItems = cart.items.filter(item => {
+            const id =(item.product as any)._id.toString();
+            return id !== productId
+        });
+        return this.cartModel.findOneAndUpdate(
+            { user: userId },
+            { $set: { items: newItems } },
+            { new: true }
+        ).populate({
+            path: 'items.product',
+            model: 'Product'
+        })
     }
 }

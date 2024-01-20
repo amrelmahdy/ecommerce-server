@@ -3,6 +3,7 @@ import { Cart } from './schemas/cart.schema';
 import { CartService } from './cart.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { AddToCartDto } from './dtos/add-to-cart.dto';
+import { RemoveFromCartDto } from './dtos/remove-from-cart.dto';
 
 @Controller('cart')
 export class CartController {
@@ -29,6 +30,15 @@ export class CartController {
         const { productId, quantity } = body;
         const userId = req.user.userId;
         return this.cartService.addItemToCart(userId, productId, quantity);
+    }
+
+
+    @UseGuards(JwtAuthGuard)
+    @Post("delete")
+    removeItemFromCart(@Body() body: RemoveFromCartDto, @Request() req: any) : Promise<any>{
+        const { productId } = body;
+        const userId = req.user.userId;
+        return this.cartService.removeProductFromCart(userId, productId);
     }
 
     @Post()

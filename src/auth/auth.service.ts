@@ -41,8 +41,8 @@ export class AuthService {
             access_token: this.jwtService.sign(payload),
             refresh_token: this.jwtService.sign(payload, { expiresIn: '86400s' }),
             token_type: "Bearer",
-            expires_in: "3600",
-            expires_at: `${now + 3600 * 1000}`,
+            expires_in: "100",
+            expires_at: `${now + 100 * 1000}`,
             refresh_expires_at: `${now + 86400 * 1000}`,
             refresh_expires_in: "86400",
             userInfo: user
