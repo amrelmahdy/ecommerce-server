@@ -4,17 +4,19 @@ import { Product } from './schemas/product.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { CategoriesService } from 'src/categories/categories.service';
 import { VendorsService } from 'src/vendors/vendors.service';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
-function fuzzySearch(text) {
-    return text.split('').join('.*');
-}
+// function fuzzySearch(text) {
+//     return text.split('').join('.*');
+// }
 
-const fs = require('fs-extra')
+// const fs = require('fs-extra')
 @Injectable()
 export class ProductsService {
     constructor(
         private categoriesService: CategoriesService,
         private vendorsServices: VendorsService,
+        private cloudinaryService: CloudinaryService,
         @InjectModel(Product.name)
         private productsModel: mongoose.Model<Product>
     ) { }
@@ -174,8 +176,9 @@ export class ProductsService {
         if (!deleted) {
             throw new NotFoundException("Product not found")
         }
-        const currentDirectory = process.cwd();
-        fs.remove(currentDirectory + "/assets/uploads/products/" + deleted.slug);
+        this.cloudinaryService.deleteImagesFolder(`products/${deleted.slug}`)
+        // const currentDirectory = process.cwd();
+        // fs.remove(currentDirectory + "/assets/uploads/products/" + deleted.slug);
         return deleted;
     }
 }

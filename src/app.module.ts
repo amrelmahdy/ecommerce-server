@@ -13,6 +13,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { VendorsModule } from './vendors/vendors.module';
 import { CartModule } from './cart/cart.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -38,7 +39,8 @@ import { CartModule } from './cart/cart.module';
     AuthModule,
     MulterConfigModule,
     VendorsModule,
-    CartModule
+    CartModule,
+    CloudinaryModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,5 +1,6 @@
 import { IsArray,IsNotEmpty, IsOptional } from 'class-validator';
 import { Category } from './../schemas/category.schema'
+import { Image } from 'src/utils/schemas';
 
 export class CreateCategoryDto {
     @IsNotEmpty()
@@ -12,7 +13,7 @@ export class CreateCategoryDto {
     slug: string;
     
     @IsOptional()
-    image: string;
+    image: any;
 
     @IsOptional()
     @IsArray()

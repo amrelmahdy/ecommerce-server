@@ -1,36 +1,16 @@
 
 
 // upload.controller.ts
-import { BadRequestException, Body, Controller, FileTypeValidator, InternalServerErrorException, Param, ParseFilePipe, Post, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, FileTypeValidator, InternalServerErrorException, Param, ParseFilePipe, Post, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { AnyFilesInterceptor, FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { UploadService } from './upload.service';
 import { extname } from 'path';
-import * as path from 'path';
-
-
-
-
-
-const pngFileFilter = (req, file, callback) => {
-    let ext = path.extname(file.originalname);
-
-    if (ext !== '.png') {
-        req.fileValidationError = 'Invalid file type';
-        return callback(new Error('Invalid file type'), false);
-    }
-
-    return callback(null, true);
-};
-
-
 
 @Controller()
 export class UploadController {
 
     constructor(private uploadService: UploadService) { }
-
-
     allowedFileExtensions = ['.png', '.jpeg', '.jpg'];
 
     validateFileExtension(file: Express.Multer.File) {
@@ -122,14 +102,4 @@ export class UploadController {
 
         return results
     }
-
-
-    // @Post("dynamic-upload-multiple-files/:path?")
-    // @UseInterceptors(FilesInterceptor('files'))
-    // async uploadDFiles(@UploadedFiles() files) {
-    //     console.log(files);
-    //     // console.log(param);
-
-    //     return 'Done';
-    // }
 }

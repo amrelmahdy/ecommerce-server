@@ -1,6 +1,7 @@
 import { IsNotEmpty, IsArray, IsNumber, IsBoolean, IsOptional, ArrayMinSize } from 'class-validator';
 import { Category } from 'src/categories/schemas/category.schema';
-import { Product, Image, Review, Tag } from 'src/products/schemas/product.schema';
+import { Product, Review, Tag } from 'src/products/schemas/product.schema';
+import { Image } from 'src/utils/schemas';
 import { Vendor } from 'src/vendors/schemas/vendor.schema';
 
 export class EditProductDto {

@@ -1,5 +1,6 @@
 import { IsOptional, IsArray } from 'class-validator';
 import { Category } from '../schemas/category.schema';
+import { Image } from 'src/utils/schemas';
 
 export class EditCategoryDto {
     @IsOptional()
@@ -12,7 +13,7 @@ export class EditCategoryDto {
     slug: string;
 
     @IsOptional()
-    image: string;
+    image: any;
 
     @IsOptional()
     @IsArray()

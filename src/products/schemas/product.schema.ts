@@ -2,13 +2,8 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Category } from './../../categories/schemas/category.schema'
 import mongoose from 'mongoose';
 import { Vendor } from 'src/vendors/schemas/vendor.schema';
+import { Image } from 'src/utils/schemas';
 
-
-export interface Image {
-    url: string;
-    width: number;
-    height: number;
-}
 
 export interface Review {
     value: string;

@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Category } from './schemas/category.schema';
 import * as mongoose from 'mongoose';
 
-const fs = require('fs-extra')
+//const fs = require('fs-extra')
 @Injectable()
 export class CategoriesService {
     constructor(
@@ -68,7 +68,7 @@ export class CategoriesService {
         const { ar_name, en_name, slug, image } = category;
         const updatedCategory = await this.categoryModel.findOneAndUpdate(
             { _id: id },
-            { $set: { ar_name, en_name, slug, image } },
+            { $set: { ...category } },
             { new: true }
         );
 
@@ -115,8 +115,6 @@ export class CategoriesService {
                 $pull: { sub_categories: id }
             }
         );
-        const currentDirectory = process.cwd();
-        fs.remove(currentDirectory + "/assets/uploads/categories/" + deleted.slug);
         return deleted;
     }
 }
