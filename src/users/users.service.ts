@@ -29,7 +29,7 @@ export class UsersService {
 
 
     async findById(id: string): Promise<User> {
-        const user = await this.usersModel.findById(id).populate("wish_list");
+        const user = await this.usersModel.findById(id).populate("wish_list addresses");
         if (!user) {
             throw new NotFoundException("User not found.");
         }
@@ -43,10 +43,10 @@ export class UsersService {
         return user;
     }
 
-    async update(id: string, user: User): Promise<User> {
-        const updatedUser = await this.usersModel.findOneAndUpdate(
+    async update(id: string, user: any, extras?: any): Promise<User> {
+        const updatedUser = await this.usersModel.findByIdAndUpdate(
             { _id: id },
-            { $set: { ...user } },
+            { $set: { ...user }, ...extras },
             { new: true }
         );
         return updatedUser
@@ -76,17 +76,14 @@ export class UsersService {
         }
 
         const isProductInWishlist = user.wish_list.some((wishlistProduct) => wishlistProduct.toString() === productId.toString());
+        const filter = { "$or": [{ email: username }, { phone: username }] };
 
-        // If the product is already in the wishlist, remove it; otherwise, add it
-        const userUpdated = isProductInWishlist
-            ? this.usersModel.updateOne(
-                { "$or": [{ email: username }, { phone: username }] },
-                { $pull: { wish_list: productId } }
-            )
-            : this.usersModel.updateOne(
-                { "$or": [{ email: username }, { phone: username }] },
-                { $addToSet: { wish_list: productId } }
-            );
+        const updateOperation = isProductInWishlist
+        ? { $pull: { wish_list: productId } }
+        : { $addToSet: { wish_list: productId } };
+
+
+        const userUpdated = await this.usersModel.findOneAndUpdate(filter, updateOperation, { new: true }).populate("addresses wish_list");
 
         if (!userUpdated) {
             throw new NotFoundException("Failed to update user wishlist.");

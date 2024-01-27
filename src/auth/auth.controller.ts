@@ -33,4 +33,11 @@ export class AuthController {
     async refreshToken(@Request() req: any): Promise<any> {
         return this.authService.refreshToken(req.user);
     }
+
+
+    @UseGuards(JwtAuthGuard)
+    @Post("decode")
+    async decodeToken(@Body("token") token: string){
+        return this.authService.decodeToken(token);
+    }
 }

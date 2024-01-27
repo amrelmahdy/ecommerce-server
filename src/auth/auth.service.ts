@@ -36,15 +36,18 @@ export class AuthService {
                 phone: user.phone
             }
         };
-
+        // Calculate expiration time for access token (1 day)
+        const accessTokenExpiresAt = now + (86400 * 1000); // 86400 seconds * 1000 milliseconds/second
+        // Calculate expiration time for refresh token (7 days)
+        const refreshTokenExpiresAt = now + (7 * 24 * 60 * 60 * 1000); // 7 days * 24 hours/day * 60 minutes/hour * 60 seconds/minute * 1000 milliseconds/second
         return {
-            access_token: this.jwtService.sign(payload),
-            refresh_token: this.jwtService.sign(payload, { expiresIn: '86400s' }),
+            access_token: this.jwtService.sign(payload, { expiresIn: '86400s' }),
+            refresh_token: this.jwtService.sign(payload, { expiresIn: '7d' }),
             token_type: "Bearer",
-            expires_in: "100",
-            expires_at: `${now + 100 * 1000}`,
-            refresh_expires_at: `${now + 86400 * 1000}`,
-            refresh_expires_in: "86400",
+            expires_in: "86400",
+            expires_at: `${accessTokenExpiresAt}`,
+            refresh_expires_in: "604800",
+            refresh_expires_at: `${refreshTokenExpiresAt}`,
             userInfo: user
         }
     }
@@ -76,20 +79,27 @@ export class AuthService {
                 phone: user.phone
             }
         };
+        // Calculate expiration time for access token (1 day)
+        const accessTokenExpiresAt = now + (86400 * 1000); // 86400 seconds * 1000 milliseconds/second
+        // Calculate expiration time for refresh token (7 days)
+        const refreshTokenExpiresAt = now + (7 * 24 * 60 * 60 * 1000); // 7 days * 24 hours/day * 60 minutes/hour * 60 seconds/minute * 1000 milliseconds/second
+
         return {
-            access_token: this.jwtService.sign(payload),
-            refresh_token: this.jwtService.sign(payload, { expiresIn: '86400s' }),
+            access_token: this.jwtService.sign(payload, { expiresIn: '86400s' }),
+            refresh_token: this.jwtService.sign(payload, { expiresIn: '7d' }),
             token_type: "Bearer",
-            expires_in: "3600",
-            expires_at: `${now + 3600 * 1000}`,
-            refresh_expires_at: `${now + 86400 * 1000}`,
-            refresh_expires_in: "86400",
+            expires_in: "86400",
+            expires_at: `${accessTokenExpiresAt}`,
+            refresh_expires_in: "604800",
+            refresh_expires_at: `${refreshTokenExpiresAt}`,
             userInfo: user
         }
     }
 
     refreshToken(currentUser: any): any {
         const now = Date.now()
+         // Calculate expiration time for access token (1 day)
+         const accessTokenExpiresAt = now + (86400 * 1000); // 86400 seconds * 1000 milliseconds/second
         const payload = {
             userId: currentUser.userId,
             username: currentUser.username,
@@ -99,9 +109,9 @@ export class AuthService {
             }
         };
         return {
-            access_token: this.jwtService.sign(payload),
-            expires_in: "3600",
-            expires_at: `${now + 3600 * 1000}`,
+            access_token: this.jwtService.sign(payload, { expiresIn: '86400s' }),
+            expires_in: "86400",
+            expires_at: `${accessTokenExpiresAt}`,
         }
     }
 
@@ -109,6 +119,11 @@ export class AuthService {
         const { userId } = user
         const currentUser = await this.usersService.findById(userId);
         return currentUser
+    }
+
+    async decodeToken(token: string) {
+        const decodedToken = this.jwtService.decode(token);
+        return decodedToken
     }
 
 }

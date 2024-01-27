@@ -1,5 +1,6 @@
 import { SchemaFactory, Prop, Schema } from "@nestjs/mongoose";
 import mongoose from "mongoose";
+import { Address } from "src/addresses/schemas/address.schema";
 import { Product } from "src/products/schemas/product.schema";
 
 
@@ -41,6 +42,10 @@ export class User {
    
     @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }], default: [] })
     wish_list: Product[]
+
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Address' }], default: [] })
+    addresses: Address[]
+
 
     
     

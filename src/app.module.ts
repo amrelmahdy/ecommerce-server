@@ -14,6 +14,7 @@ import { join } from 'path';
 import { VendorsModule } from './vendors/vendors.module';
 import { CartModule } from './cart/cart.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { AddressesModule } from './addresses/addresses.module';
 
 @Module({
   imports: [
@@ -40,7 +41,8 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     MulterConfigModule,
     VendorsModule,
     CartModule,
-    CloudinaryModule
+    CloudinaryModule,
+    AddressesModule
   ],
   controllers: [AppController],
   providers: [AppService],

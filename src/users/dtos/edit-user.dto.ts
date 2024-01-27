@@ -1,5 +1,6 @@
 
 import { IsEmail, IsNotEmpty, IsOptional } from "class-validator";
+import { Address } from "src/addresses/schemas/address.schema";
 import { Product } from "src/products/schemas/product.schema";
 
 export class EditUserDto {
@@ -26,5 +27,8 @@ export class EditUserDto {
     image: string;
     
     @IsOptional()
-    wish_list: Product[]
+    wish_list: Product[];
+
+    @IsOptional()
+    addresses: Address[];
 }

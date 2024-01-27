@@ -19,7 +19,7 @@ import { RefreshTokenJwtStrategy } from './strategies/refresh-token-jwt.strategy
       useFactory: async (configService: ConfigService) => {
         return {
           secret: configService.get<string>('JWT_SECRET'),
-          signOptions: { expiresIn: '3600s' },
+          signOptions: { expiresIn: '86400s' },
         };
       },
     })
