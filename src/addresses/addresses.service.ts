@@ -12,7 +12,7 @@ export class AddressesService {
         private usersService: UsersService
     ) { }
 
-    async create(address: Address, userId: string) {
+    async create(address: Address, userId: string) : Promise<Address> {
         const currentuser = this.usersService.findById(userId);
         if (!currentuser) {
             throw new NotFoundException("User not found.")
@@ -38,7 +38,7 @@ export class AddressesService {
         return addressCreated;
     }
 
-    async setDefaultAddress(addressId: string, userId: string) {
+    async setDefaultAddress(addressId: string, userId: string): Promise<Address> {
         const currentuser = this.usersService.findById(userId);
         if (!currentuser) {
             throw new NotFoundException("User not found.")
@@ -61,5 +61,21 @@ export class AddressesService {
         }
 
         return address;
+    }
+
+    async findById(addressId: string){
+        const address = await this.addressesModel.findById(addressId);
+        if (!address) {
+            throw new NotFoundException("Address not found.")
+        }
+        return address
+    }
+
+    async delete(addressId: string){
+        const address = await this.addressesModel.findByIdAndDelete(addressId);
+        if (!address) {
+            throw new NotFoundException("Address not found.")
+        }
+        return address
     }
 }
