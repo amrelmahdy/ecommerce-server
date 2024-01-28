@@ -12,7 +12,7 @@ export class AddressesService {
         private usersService: UsersService
     ) { }
 
-    async create(address: Address, userId: string) : Promise<Address> {
+    async create(address: Address, userId: string): Promise<Address> {
         const currentuser = this.usersService.findById(userId);
         if (!currentuser) {
             throw new NotFoundException("User not found.")
@@ -63,7 +63,11 @@ export class AddressesService {
         return address;
     }
 
-    async findById(addressId: string){
+    async findById(addressId: string): Promise<Address> {
+        const validObjectId = mongoose.Types.ObjectId.isValid(addressId);
+        if (!validObjectId) {
+            throw new NotFoundException("Address not found.")
+        }
         const address = await this.addressesModel.findById(addressId);
         if (!address) {
             throw new NotFoundException("Address not found.")
@@ -71,11 +75,27 @@ export class AddressesService {
         return address
     }
 
-    async delete(addressId: string){
+    async update(addressId: string, address: Address) {
+        const validObjectId = mongoose.Types.ObjectId.isValid(addressId);
+        if (!validObjectId) {
+            throw new NotFoundException("Address not found.")
+        }
+        const updatedAddress = await this.addressesModel.findByIdAndUpdate(
+            addressId,
+            { $set: { ...address } },
+            { new: true } // To return the updated document
+        );
+        if (!updatedAddress) {
+            throw new NotFoundException("Address not found.")
+        }
+        return address;
+    }
+
+    async delete(addressId: string): Promise<any> {
         const address = await this.addressesModel.findByIdAndDelete(addressId);
         if (!address) {
             throw new NotFoundException("Address not found.")
         }
-        return address
+        return address;
     }
 }
